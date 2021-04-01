@@ -7,12 +7,12 @@ from memory import Memory
 
 def build_dqn(lr, n_actions):
     model = keras.Sequential([
-        Dense(16, activation="relu"),
-        Dense(16, activation="relu"),
+        Dense(256, activation="relu"),
+        Dense(256, activation="relu"),
         Dense(n_actions, activation=None)
     ])
     opt = Adam(learning_rate=lr)
-    model.compile(optimizer=opt, loss="mean_squared_error")
+    model.compile(optimizer=opt, loss="mse")
     return model
 
 
@@ -46,7 +46,7 @@ class Agent:
         actions, rewards, states, next_states, has_future = self.memory.sample(
             self.batch_size)
 
-        q_values = self.model.predict(states)
+        q_values = np.copy(self.model.predict(states))
         next_q_values = self.model.predict(next_states)
 
         ii = np.arange(self.batch_size, dtype=int)

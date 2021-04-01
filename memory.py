@@ -1,7 +1,4 @@
 import numpy as np
-import keras
-from keras.layers import Dense
-from keras.optimizers import Adam
 
 
 class Memory:
@@ -28,15 +25,11 @@ class Memory:
     def sample(self, size: int):
         max_i = min(self.counter, self.size)
         ii = np.random.choice(max_i, size, replace=False)
-        return self.actions[ii], self.rewards[ii], self.states[ii], self.states[ii+1], self.has_future[ii]
 
+        actions = self.actions[ii]
+        rewards = self.rewards[ii]
+        states = self.states[ii]
+        next_states = self.states[ii + 1 % max_i]
+        has_future = self.has_future[ii]
 
-def build_dqn(lr, n_actions):
-    model = keras.Sequential([
-        Dense(256, activation="relu"),
-        Dense(256, activation="relu"),
-        Dense(n_actions, activation=None)
-    ])
-    opt = Adam(learning_rate=lr)
-    model.compile(optimizer=opt, loss="mean_squared_error")
-    return model
+        return actions, rewards, states, next_states, has_future
